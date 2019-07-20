@@ -22,6 +22,7 @@ export default class App extends React.Component {
   }
 
   initializeGame = () => {
+    // set the initial values for the game
     this.setState({
       gameState:
         [
@@ -37,44 +38,54 @@ export default class App extends React.Component {
     const NUM_TILES = 3;
     var arr = this.state.gameState;
     var sum;
-    // Check rows
+    // check rows
     for(var i = 0; i < NUM_TILES; i++) {
       sum = arr[i][0] + arr[i][1] + arr[i][2];
       if(sum == 3) { return 1; }
       else if(sum == -3) { return -1; }
     }
-
+    // check columns
     for(var i = 0; i < NUM_TILES; i++) {
       sum = arr[0][i] + arr[1][i] + arr[2][i];
       if(sum == 3) { return 1; }
       else if(sum == -3) { return -1; }
     }
 
+    // check diagnal (top left to bottom right)
     sum = arr[0][0] + arr[1][1] + arr[2][2];
     if(sum == 3) { return 1; }
     else if(sum == -3) { return -1; }
 
-    sum = arr[2][0] + arr[1][1] + arr[2][0];
+    // check diagnal (bottom left to top right)
+    sum = arr[2][0] + arr[1][1] + arr[0][2];
     if(sum == 3) { return 1; }
     else if(sum == -3) { return -1; }
 
-    // There are no winners
+    // there are no winners
     return 0;
 
   }
 
+  // called when a tile is pressed
   onTilePress = (row, col) => {
 
+    // value of the tapped tile
     var value = this.state.gameState[row][col];
+    // return if this tile already has a value other than 0
     if(value !== 0) { return; }
 
     var currentPlayer = this.state.currentPlayer;
 
+    // copy the gameState array into a new array
     var arr = this.state.gameState.slice();
 
+    // change the value of that tile to the current player
     arr[row][col] = currentPlayer;
+
+    // set the state with the new data and change the current player
     this.setState({ gameState: arr, currentPlayer: -currentPlayer })
 
+    // check to see if there is a winner
     var winner = this.getWinner();
     if(winner == 1) {
       alert('Player 1 is the winner!');
@@ -91,7 +102,12 @@ export default class App extends React.Component {
   }
 
   renderIcon = (row, col) => {
+    // the value of the tapped tile
     var val = this.state.gameState[row][col];
+
+    // do action based on the player value
+    // 1 is for X
+    // -1 is for O
     switch (val) {
       case 1: return <Icon name='close' style={styles.tileX} />;
       case -1: return <Icon name='circle-outline' style={styles.tileO} />;
@@ -99,7 +115,7 @@ export default class App extends React.Component {
 
     }
   }
-  
+
   render() {
     return (
       <View style={styles.container}>
